@@ -1,8 +1,7 @@
 const User = require("../models/user.model.js");
 const bcrypt = require("bcrypt");
 const jwt=require('jsonwebtoken');
-const transporter = require("../config/nodemailer.js");
-
+const Note =require('../models/note.model.js')
 
 const loginController = async (req, res) => {
     try {
@@ -20,7 +19,7 @@ const loginController = async (req, res) => {
         const isMatched = await bcrypt.compare(password, existingUser.password);
     if(!isMatched)return res.status(400).json({message:"invalid password"});
        
-    const token=jwt.sign({id:existingUser._id},process.env.jwt_secret,{expiresIn:'1h'});
+    const token=jwt.sign({id:existingUser._id},process.env.JWT_SECRET,{expiresIn:'1h'});
     
     res.cookie("token", token, {
       httpOnly: true,
@@ -28,7 +27,7 @@ const loginController = async (req, res) => {
       sameSite: "strict",
       maxAge: 24 * 60 * 60 * 1000,
     });
-    console.log(token);
+
         res.status(200).json({token, user:existingUser, message: "loggedin successfully successfully" });
       } catch (error) {
         res.status(500).json({ message: "enternal server erorr" });
@@ -67,20 +66,6 @@ const signupController = async (req, res) => {
 
     
 
-    // Email send
-    try {
-      const mailOption = {
-        from: process.env.SENDER_EMAIL,
-        to: email,
-        subject: "Welcome to Notebook",
-        text: `Welcome to Notebook web site. Your account has been created successfully with email ID: ${email}`,
-      };
-
-      await transporter.sendMail(mailOption);
-    } catch (emailErr) {
-      console.error("Email sending failed:", emailErr.message);
-    }
-
     res.status(200).json({ user, message: "Registered successfully" });
   } catch (error) {
     console.error("Signup error:", error.message);
@@ -103,4 +88,26 @@ const Logout=(req,res)=>{
   }
 }
 
-module.exports = { loginController, signupController,Logout };
+
+const createNote = async (req, res) => {
+  const { text, complete } = req.body;
+
+  try {
+    const {userId} = req; // make sure user is authenticated and `req.user` is set
+
+    const existing = await Note.findOne({ text, user: userId });
+    if (existing) {
+      return res.status(400).json({ message: "Note already exists for this user" });
+    }
+
+    const newNote = new Note({ text, complete, user: userId });
+    await newNote.save();
+
+    res.status(201).json({ message: "Note created", note: newNote });
+  } catch (err) {
+    console.error("Error saving note:", err);
+    res.status(500).json({ error: "Failed to save note" });
+  }
+}
+
+module.exports = { loginController, signupController,Logout,createNote };

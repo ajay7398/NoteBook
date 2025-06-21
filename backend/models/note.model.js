@@ -1,17 +1,18 @@
-const mogoose=require('mongoose')
+const mongoose = require("mongoose"); // ✅ correct spelling
 
-
-const noteSchema=mogoose.Schema({
-    text:{
-        type:String,
-        required:true
-    },
-    complete:{
-        type:Boolean,
-        default:false
-    }
+const noteSchema = mongoose.Schema({
+  text: {
+    type: String,
+    required: true,
+  },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  complete: {
+    type: Boolean,
+    default: false,
+  },
+  createdAt: { type: Date, default: Date.now },
 });
 
-const noteModel=mogoose.model('note',noteSchema);
+const noteModel = mongoose.model("note", noteSchema);
 
-module.exports=noteModel;
+module.exports = noteModel;

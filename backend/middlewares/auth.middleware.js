@@ -1,17 +1,19 @@
 const jwt = require("jsonwebtoken");
 
 const verifyToken = (req, res, next) => {
-  const token = req.cookies.token;
-  console.log(token);
+  const {token} = req.cookies;
+  console.log(token)
   if (!token) {
     return res.status(401).json({ message: "No token, authorization denied" });
   }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // 👈 Save decoded token to request
+    
+    req.userId = decoded.id; // 👈 Save decoded token to request
     next();
   } catch (error) {
+    console.log(error)
     res.status(401).json({ message: "Token is not valid" });
   }
 };
