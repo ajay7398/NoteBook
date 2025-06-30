@@ -16,7 +16,7 @@ db();
   
 // Middleware
 app.use(cors({
-  origin: ["http://localhost:3000",'https://noteleaf.netlify.app/'], // or replace with actual frontend origin
+  origin: ["http://localhost:3000",'https://noteleaf.netlify.app'], // or replace with actual frontend origin
   credentials: true,
 }));
 
