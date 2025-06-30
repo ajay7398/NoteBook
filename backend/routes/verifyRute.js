@@ -1,3 +1,4 @@
 const verifyUser =require('../controllers/verify.controller')
-
-app.get("/verify",verifyUser);
+const router=require('express').Router();
+router.get("/verify",verifyUser);
+module.exports=router
