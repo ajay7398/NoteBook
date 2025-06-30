@@ -5,6 +5,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const router=require('./routes/authRoute.js')
 const note=require('./routes/note.js')
+const verifyRouter=require('./routes/verifyRute.js')
 const app = express();
 const cookieParser = require("cookie-parser");
 
@@ -28,7 +29,7 @@ app.use(cookieParser());
 
 app.use('/auth',router)
 app.use('/api',note);
-
+app.use('/api',verifyRouter)
 
 
 
