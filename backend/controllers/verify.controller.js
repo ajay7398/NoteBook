@@ -1,6 +1,6 @@
 const verifyUser=async(req,res)=>{
  const token = req.cookies.token;
-
+const jwt = require('jsonwebtoken');
   if (!token) return res.json({ success: false });
 
   try {
